@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수행평가 안내</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --ink:#142033; --muted:#5d6b7e; --line:#d6dce4;
+  --navy:#142033; --navy-ink:#f3f6fa;
+  --soon:#d9480f; --soon-bg:#fff0e6;
+  --plan:#1c5fa8; --plan-bg:#e6f0fb;
+  --done:#5d6b7e; --done-bg:#e9edf1;
+  --focus:#1c5fa8;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f151f; --surface:#171f2c; --ink:#e8edf5; --muted:#9aa8bb; --line:#2a3546;
+    --navy:#0a0f17; --navy-ink:#e8edf5;
+    --soon:#ff9a62; --soon-bg:#3a2417;
+    --plan:#7db4f0; --plan-bg:#162a42;
+    --done:#9aa8bb; --done-bg:#222c3b;
+    --focus:#7db4f0;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.65 "IBM Plex Sans KR","Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+
+/* 헤더 */
+.top{background:var(--navy);color:var(--navy-ink);padding:28px 0 26px}
+.top .wrap{display:flex;gap:16px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+.top h1{margin:0;font-size:clamp(26px,5vw,38px);line-height:1.2;font-weight:700;letter-spacing:-.02em}
+.top .sub{margin:6px 0 0;font-size:14px;opacity:.75}
+.admin-tools{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;cursor:pointer;font-size:14px;font-weight:500;line-height:1.3}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--plan);border-color:var(--plan);color:#fff}
+.btn.danger{color:var(--soon)}
+.btn.small{padding:5px 10px;font-size:13px}
+.top .btn{background:transparent;color:var(--navy-ink);border-color:rgba(255,255,255,.35)}
+.top .btn:hover{border-color:#fff}
+.top .btn.primary{background:#fff;color:#142033;border-color:#fff}
+
+main{padding:24px 0 60px}
+.banner{margin:0 0 16px;padding:10px 14px;border-radius:8px;background:var(--soon-bg);color:var(--soon);font-size:14px}
+.notice{margin:0 0 20px;padding:14px 16px;border-left:4px solid var(--plan);background:var(--surface);white-space:pre-wrap}
+
+/* 요약 */
+.stats{display:flex;gap:0;margin:0 0 20px;border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.stat{flex:1;padding:12px 16px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-size:26px;line-height:1.2;font-weight:700}
+.stat span{font-size:13px;color:var(--muted)}
+
+/* 도구 */
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+.tools input[type=search]{flex:1 1 200px;min-width:0;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 13px;font-size:14px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--navy);border-color:var(--navy);color:var(--navy-ink)}
+.tools select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+
+/* 목록 */
+.list{border:1px solid var(--line);border-radius:10px;background:var(--surface);overflow:hidden}
+.row{display:grid;grid-template-columns:104px 1fr;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.dday{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 8px;text-align:center;background:var(--plan-bg);color:var(--plan)}
+.dday b{font-size:28px;line-height:1.1;font-weight:700;letter-spacing:-.02em}
+.dday span{font-size:12px;margin-top:4px}
+.row.soon .dday{background:var(--soon-bg);color:var(--soon)}
+.row.done .dday{background:var(--done-bg);color:var(--done)}
+.row.done .body h2{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.body{padding:16px 18px;min-width:0}
+.meta{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:14px;color:var(--muted);align-items:center}
+.tag{display:inline-block;padding:1px 9px;border-radius:999px;font-size:13px;font-weight:500;background:var(--plan-bg);color:var(--plan)}
+.tag.ongoing{background:var(--soon-bg);color:var(--soon)}
+.tag.done{background:var(--done-bg);color:var(--done)}
+.body h2{margin:4px 0 6px;font-size:19px;line-height:1.4;font-weight:700;overflow-wrap:anywhere}
+.desc{margin:0 0 10px;white-space:pre-wrap;overflow-wrap:anywhere}
+.mats{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.mat{border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.mat-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mat-name{flex:1 1 140px;min-width:0;font-weight:500;overflow-wrap:anywhere}
+.mat-kind{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 6px}
+.mat details summary{cursor:pointer;font-size:14px;color:var(--plan);margin-top:6px}
+.mat pre{margin:8px 0 0;padding:10px 12px;background:var(--bg);border-radius:6px;white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:15px;max-height:320px;overflow:auto}
+.mat a.btn{text-decoration:none;display:inline-block}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+.foot{margin-top:24px;font-size:13px;color:var(--muted);text-align:center}
+
+@media (max-width:560px){
+  .row{grid-template-columns:1fr}
+  .dday{flex-direction:row;gap:10px;padding:8px 16px;justify-content:flex-start}
+  .dday b{font-size:20px}.dday span{margin:0}
+  .stat{padding:10px 10px}.stat b{font-size:22px}
+}
+
+/* 대화상자 */
+dialog{border:0;padding:0;border-radius:14px;width:min(680px,94vw);max-height:92vh;background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(10,16,26,.55)}
+.dlg{padding:22px;display:flex;flex-direction:column;gap:14px;max-height:92vh;overflow:auto}
+.dlg h3{margin:0;font-size:20px}
+.f{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted)}
+.f input,.f select,.f textarea{padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:16px}
+.f textarea{min-height:90px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media (max-width:560px){.grid2,.grid3{grid-template-columns:1fr}}
+.dlg-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.med{border:1px dashed var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.med-top{display:flex;gap:8px;align-items:center}
+.med-top input{flex:1;min-width:0}
+.med input,.med textarea{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:16px;width:100%}
+.med textarea{min-height:90px;resize:vertical}
+.med-note{font-size:13px;color:var(--muted)}
+.err{color:var(--soon);font-size:14px;min-height:1.4em;margin:0}
+
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--navy);color:var(--navy-ink);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+#toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div>
+      <h1 id="siteTitle">수행평가 안내</h1>
+      <p class="sub" id="updated"></p>
+    </div>
+    <div class="admin-tools" id="adminTools"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="banner"></div>
+  <div id="notice"></div>
+  <div class="stats" id="stats"></div>
+  <div class="tools">
+    <input type="search" id="q" placeholder="과목이나 제목으로 검색" aria-label="검색">
+    <div class="chips" id="chips"></div>
+    <select id="subjectSel" aria-label="과목 선택"></select>
+  </div>
+  <div class="list" id="list" aria-live="polite"></div>
+  <p class="foot">자료는 누구나 보고 복사하거나 내려받을 수 있어요. 수정은 관리자만 할 수 있어요.</p>
+</main>
+
+<!-- 로그인 -->
+<dialog id="loginDlg">
+  <form class="dlg" id="loginForm" method="dialog" onsubmit="return false">
+    <h3>관리자 로그인</h3>
+    <label class="f">아이디<input id="lgId" autocomplete="username" required></label>
+    <label class="f">비밀번호<input id="lgPw" type="password" autocomplete="current-password" required></label>
+    <p class="err" id="lgErr"></p>
+    <div class="dlg-actions">
+      <button type="button" class="btn" data-close="loginDlg">취소</button>
+      <button type="submit" class="btn primary" id="lgGo">로그인</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 사이트 설정 -->
+<dialog id="setDlg">
+  <form class="dlg" id="setForm" method="dialog" onsubmit="return false">
+    <h3>사이트 설정</h3>
+    <label class="f">사이트 제목<input id="stTitle" maxlength="100"></label>
+    <label class="f">공지 (비워두면 숨겨져요)<textarea id="stNotice" maxlength="2000"></textarea></label>
+    <div class="dlg-actions">
+      <button type="button" class="btn" data-close="setDlg">취소</button>
+      <button type="submit" class="btn primary">저장</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 수행평가 편집 -->
+<dialog id="editDlg">
+  <form class="dlg" id="editForm" method="dialog" onsubmit="return false">
+    <h3 id="edTitle">수행평가 추가</h3>
+    <div class="grid2">
+      <label class="f">과목<input id="edSubject" maxlength="30" required></label>
+      <label class="f">제목<input id="edName" maxlength="100" required></label>
+    </div>
+    <div class="grid3">
+      <label class="f">마감일<input id="edDue" type="date"></label>
+      <label class="f">상태
+        <select id="edStatus">
+          <option value="scheduled">예정</option>
+          <option value="ongoing">진행중</option>
+          <option value="done">완료</option>
+        </select>
+      </label>
+      <label class="f">반영 비율<input id="edWeight" maxlength="20" placeholder="예: 20%"></label>
+    </div>
+    <label class="f">안내 내용<textarea id="edDesc" maxlength="3000"></textarea></label>
+    <div>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:6px">자료</div>
+      <div id="edMats" style="display:flex;flex-direction:column;gap:8px"></div>
+      <div class="row-actions">
+        <button type="button" class="btn small" data-add="text">+ 글 자료</button>
+        <button type="button" class="btn small" data-add="link">+ 링크</button>
+        <button type="button" class="btn small" data-add="file">+ 파일</button>
+      </div>
+    </div>
+    <p class="err" id="edErr"></p>
+    <div class="dlg-actions">
+      <button type="button" class="btn" data-close="editDlg">취소</button>
+      <button type="submit" class="btn primary" id="edSave">저장</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" role="status"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const STATUS = { scheduled:'예정', ongoing:'진행중', done:'완료' };
+const safeUrl = u => /^https?:\/\//i.test(u || '') ? u : '';
+
+const SAMPLE = {
+  title:'수행평가 안내', notice:'', updatedAt:null,
+  items:[
+    { id:'s1', subject:'국어', title:'독서 감상문 쓰기', due:'', status:'ongoing', weight:'20%', desc:'서버에 연결되면 실제 데이터가 보여요. 이건 샘플이에요.', materials:[{id:'m1',kind:'text',name:'작성 기준',content:'1. 800자 이상\n2. 책의 줄거리와 느낀 점을 함께 쓰기'}] },
+    { id:'s2', subject:'수학', title:'탐구 보고서', due:'', status:'done', weight:'15%', desc:'', materials:[] }
+  ]
+};
+
+let data = null, offline = false;
+let admin = null;
+try { admin = JSON.parse(sessionStorage.getItem('adm') || 'null'); } catch {}
+const filter = { status:'all', subject:'all', q:'' };
+let draft = null, removedFiles = [];
+
+/* ---------- 통신 ---------- */
+function hdr(extra) {
+  const h = { ...(extra || {}) };
+  if (admin) { h['x-admin-id'] = encodeURIComponent(admin.id); h['x-admin-pw'] = encodeURIComponent(admin.pw); }
+  return h;
+}
+async function load() {
+  try {
+    const r = await fetch('/api/data', { cache:'no-store' });
+    if (!r.ok) throw new Error();
+    data = await r.json(); offline = false;
+  } catch { data = structuredClone(SAMPLE); offline = true; }
+  render();
+}
+async function save(msg) {
+  if (offline) { toast('서버에 연결되지 않아 저장할 수 없어요'); return false; }
+  try {
+    const r = await fetch('/api/data', { method:'PUT', headers:hdr({'content-type':'application/json'}), body:JSON.stringify(data) });
+    if (r.status === 401) { logout(); toast('로그인이 만료됐어요. 다시 로그인해 주세요'); return false; }
+    if (!r.ok) { toast('저장하지 못했어요'); return false; }
+    const j = await r.json(); data.updatedAt = j.updatedAt;
+    toast(msg || '저장했어요'); render(); return true;
+  } catch { toast('저장하지 못했어요. 인터넷 연결을 확인해 주세요'); return false; }
+}
+async function delFile(id) {
+  try { await fetch('/api/file/' + id, { method:'DELETE', headers:hdr() }); } catch {}
+}
+
+/* ---------- 유틸 ---------- */
+let tt;
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), 2200); }
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); }
+  catch { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+  toast('복사했어요');
+}
+function dlText(name, text) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type:'text/plain;charset=utf-8' }));
+  a.download = (name || '자료').replace(/[\\/:*?"<>|]/g, '_') + '.txt';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function fmtSize(n) { return n > 1048576 ? (n/1048576).toFixed(1) + 'MB' : Math.max(1, Math.round(n/1024)) + 'KB'; }
+function days(due) {
+  if (!due) return null;
+  const t = new Date(); t.setHours(0,0,0,0);
+  return Math.round((new Date(due + 'T00:00:00') - t) / 86400000);
+}
+function fmtDate(due) {
+  if (!due) return '';
+  const d = new Date(due + 'T00:00:00');
+  return `${d.getMonth()+1}월 ${d.getDate()}일(${'일월화수목금토'[d.getDay()]})`;
+}
+function itemAsText(it) {
+  const L = [`[${it.subject}] ${it.title}`, `상태: ${STATUS[it.status]}`];
+  if (it.due) L.push(`마감: ${fmtDate(it.due)}`);
+  if (it.weight) L.push(`반영 비율: ${it.weight}`);
+  if (it.desc) L.push('', it.desc);
+  (it.materials || []).forEach(m => {
+    L.push('', `■ ${m.name || '자료'}`);
+    if (m.kind === 'text') L.push(m.content || '');
+    else if (m.kind === 'link') L.push(m.url || '');
+    else if (m.kind === 'file') L.push(location.origin + '/api/file/' + m.fileId);
+  });
+  return L.join('\n');
+}
+
+/* ---------- 화면 ---------- */
+function render() {
+  document.title = data.title || '수행평가 안내';
+  $('#siteTitle').textContent = data.title || '수행평가 안내';
+  $('#updated').textContent = data.updatedAt ? '마지막 업데이트 ' + new Date(data.updatedAt).toLocaleDateString('ko-KR') : '';
+  $('#banner').innerHTML = offline ? '<p class="banner">서버에 연결하지 못해 샘플 데이터를 보여주고 있어요. Netlify에 올린 주소에서 열면 실제 데이터가 보여요.</p>' : '';
+  $('#notice').innerHTML = data.notice ? `<p class="notice">${esc(data.notice)}</p>` : '';
+
+  $('#adminTools').innerHTML = admin
+    ? `<button class="btn primary" data-act="new">+ 수행평가 추가</button><button class="btn" data-act="settings">사이트 설정</button><button class="btn" data-act="logout">로그아웃</button>`
+    : `<button class="btn" data-act="login">관리자 로그인</button>`;
+
+  const items = data.items || [];
+  const c = { all:items.length, scheduled:0, ongoing:0, done:0 };
+  items.forEach(i => c[i.status]++);
+  $('#stats').innerHTML = [['전체', c.all], ['진행중', c.ongoing], ['예정', c.scheduled], ['완료', c.done]]
+    .map(([l, n]) => `<div class="stat"><b>${n}</b><span>${l}</span></div>`).join('');
+
+  $('#chips').innerHTML = [['all','전체'],['ongoing','진행중'],['scheduled','예정'],['done','완료']]
+    .map(([k, l]) => `<button class="chip" data-chip="${k}" aria-pressed="${filter.status === k}">${l}</button>`).join('');
+
+  const subjects = [...new Set(items.map(i => i.subject).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ko'));
+  if (filter.subject !== 'all' && !subjects.includes(filter.subject)) filter.subject = 'all';
+  $('#subjectSel').innerHTML = '<option value="all">모든 과목</option>' + subjects.map(s => `<option ${s === filter.subject ? 'selected' : ''}>${esc(s)}</option>`).join('');
+
+  const q = filter.q.trim().toLowerCase();
+  const shown = items.filter(i =>
+    (filter.status === 'all' || i.status === filter.status) &&
+    (filter.subject === 'all' || i.subject === filter.subject) &&
+    (!q || (i.subject + ' ' + i.title + ' ' + (i.desc || '')).toLowerCase().includes(q))
+  ).sort((a, b) => {
+    const ad = a.status === 'done', bd = b.status === 'done';
+    if (ad !== bd) return ad ? 1 : -1;
+    return (a.due || '9999').localeCompare(b.due || '9999');
+  });
+
+  const emptyMsg = items.length ? '조건에 맞는 수행평가가 없어요.' : (admin ? '아직 등록된 수행평가가 없어요. 위의 “수행평가 추가”로 첫 항목을 등록해 보세요.' : '아직 등록된 수행평가가 없어요.');
+  $('#list').innerHTML = shown.length ? shown.map(row).join('') : `<div class="empty">${emptyMsg}</div>`;
+}
+
+function row(it) {
+  const d = days(it.due);
+  let big, small;
+  if (it.status === 'done') { big = '완료'; small = it.due ? fmtDate(it.due) : ''; }
+  else if (d === null) { big = '–'; small = '마감일 미정'; }
+  else if (d === 0) { big = 'D-day'; small = '오늘 마감'; }
+  else if (d > 0) { big = 'D-' + d; small = fmtDate(it.due); }
+  else { big = 'D+' + (-d); small = '기한이 지났어요'; }
+  const urgent = it.status !== 'done' && d !== null && d <= 3;
+  const cls = it.status === 'done' ? 'done' : urgent ? 'soon' : '';
+  const id = esc(it.id);
+  const mats = (it.materials || []).map(m => matHtml(it, m)).join('');
+  return `<article class="row ${cls}">
+    <div class="dday"><b>${esc(big)}</b><span>${esc(small)}</span></div>
+    <div class="body">
+      <div class="meta"><span class="tag ${it.status}">${STATUS[it.status]}</span><span>${esc(it.subject)}</span>${it.due ? `<span>마감 ${fmtDate(it.due)}</span>` : ''}${it.weight ? `<span>반영 ${esc(it.weight)}</span>` : ''}</div>
+      <h2>${esc(it.title)}</h2>
+      ${it.desc ? `<p class="desc">${esc(it.desc)}</p>` : ''}
+      ${mats ? `<div class="mats">${mats}</div>` : ''}
+      <div class="row-actions">
+        <button class="btn small" data-act="copy-item" data-item="${id}">안내 전체 복사</button>
+        <button class="btn small" data-act="dl-item" data-item="${id}">안내 전체 다운로드</button>
+        ${admin ? `<button class="btn small" data-act="edit" data-item="${id}">수정</button><button class="btn small danger" data-act="del" data-item="${id}">삭제</button>` : ''}
+      </div>
+    </div>
+  </article>`;
+}
+
+function matHtml(it, m) {
+  const name = esc(m.name || { text:'글 자료', link:'링크', file:'파일' }[m.kind]);
+  const ref = `data-item="${esc(it.id)}" data-mat="${esc(m.id)}"`;
+  if (m.kind === 'text')
+    return `<div class="mat"><div class="mat-head"><span class="mat-kind">글</span><span class="mat-name">${name}</span>
+      <button class="btn small" data-act="copy-mat" ${ref}>복사</button><button class="btn small" data-act="dl-mat" ${ref}>다운로드</button></div>
+      <details><summary>내용 보기</summary><pre>${esc(m.content)}</pre></details></div>`;
+  if (m.kind === 'link') {
+    const u = safeUrl(m.url);
+    return `<div class="mat"><div class="mat-head"><span class="mat-kind">링크</span><span class="mat-name">${name}</span>
+      ${u ? `<a class="btn small" href="${esc(u)}" target="_blank" rel="noopener noreferrer">열기</a>` : ''}
+      <button class="btn small" data-act="copy-mat" ${ref}>링크 복사</button></div></div>`;
+  }
+  return `<div class="mat"><div class="mat-head"><span class="mat-kind">파일</span><span class="mat-name">${name}${m.size ? ` <small style="color:var(--muted)">(${fmtSize(m.size)})</small>` : ''}</span>
+    <a class="btn small" href="/api/file/${esc(m.fileId)}" download>다운로드</a>
+    <button class="btn small" data-act="copy-mat" ${ref}>주소 복사</button></div></div>`;
+}
+
+function findMat(itemId, matId) {
+  const it = data.items.find(i => i.id === itemId);
+  return [it, it && (it.materials || []).find(m => m.id === matId)];
+}
+
+/* ---------- 이벤트 ---------- */
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-act],[data-chip],[data-close],[data-add],[data-delmat]');
+  if (!t) return;
+
+  if (t.dataset.chip) { filter.status = t.dataset.chip; return render(); }
+  if (t.dataset.close) return $('#' + t.dataset.close).close();
+  if (t.dataset.add) { draft.materials.push({ id:uid(), kind:t.dataset.add, name:'', content:'', url:'' }); return renderMeds(); }
+  if (t.dataset.delmat !== undefined) {
+    const m = draft.materials.splice(+t.dataset.delmat, 1)[0];
+    if (m && m.fileId) removedFiles.push(m.fileId);
+    return renderMeds();
+  }
+
+  const act = t.dataset.act, itemId = t.dataset.item;
+  if (act === 'login') { $('#lgErr').textContent = ''; $('#loginDlg').showModal(); $('#lgId').focus(); }
+  else if (act === 'logout') logout();
+  else if (act === 'settings') { $('#stTitle').value = data.title || ''; $('#stNotice').value = data.notice || ''; $('#setDlg').showModal(); }
+  else if (act === 'new') openEdit(null);
+  else if (act === 'edit') openEdit(itemId);
+  else if (act === 'del') {
+    const it = data.items.find(i => i.id === itemId);
+    if (!it || !confirm(`“${it.title}” 항목을 삭제할까요? 올려둔 파일도 함께 지워져요.`)) return;
+    const prev = structuredClone(data);
+    data.items = data.items.filter(i => i.id !== itemId);
+    if (await save('삭제했어요')) (it.materials || []).forEach(m => m.fileId && delFile(m.fileId));
+    else { data = prev; render(); }
+  }
+  else if (act === 'copy-item') { const it = data.items.find(i => i.id === itemId); if (it) copyText(itemAsText(it)); }
+  else if (act === 'dl-item') { const it = data.items.find(i => i.id === itemId); if (it) dlText(`${it.subject}_${it.title}`, itemAsText(it)); }
+  else if (act === 'copy-mat') {
+    const [, m] = findMat(itemId, t.dataset.mat); if (!m) return;
+    copyText(m.kind === 'text' ? m.content : m.kind === 'link' ? m.url : location.origin + '/api/file/' + m.fileId);
+  }
+  else if (act === 'dl-mat') { const [, m] = findMat(itemId, t.dataset.mat); if (m) dlText(m.name || '자료', m.content || ''); }
+});
+
+$('#q').addEventListener('input', e => { filter.q = e.target.value; render(); });
+$('#subjectSel').addEventListener('change', e => { filter.subject = e.target.value; render(); });
+
+/* ---------- 로그인 ---------- */
+function logout() { admin = null; sessionStorage.removeItem('adm'); render(); }
+$('#loginForm').addEventListener('submit', async () => {
+  const id = $('#lgId').value.trim(), pw = $('#lgPw').value;
+  $('#lgErr').textContent = ''; $('#lgGo').disabled = true;
+  try {
+    const r = await fetch('/api/login', { method:'POST', headers:{ 'content-type':'application/json' }, body:JSON.stringify({ id, pw }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) $('#lgErr').textContent = j.error || '로그인하지 못했어요';
+    else {
+      admin = { id, pw }; sessionStorage.setItem('adm', JSON.stringify(admin));
+      $('#lgPw').value = ''; $('#loginDlg').close(); render(); toast('관리자로 로그인했어요');
+    }
+  } catch { $('#lgErr').textContent = '서버에 연결할 수 없어요. Netlify에 올린 주소에서 열어 주세요'; }
+  finally { $('#lgGo').disabled = false; }
+});
+
+/* ---------- 사이트 설정 ---------- */
+$('#setForm').addEventListener('submit', async () => {
+  const prev = structuredClone(data);
+  data.title = $('#stTitle').value.trim() || '수행평가 안내';
+  data.notice = $('#stNotice').value.trim();
+  if (await save()) $('#setDlg').close(); else { data = prev; render(); }
+});
+
+/* ---------- 수행평가 편집 ---------- */
+let editingId = null, newUploads = [], savedFlag = false;
+
+function openEdit(id) {
+  const it = id ? data.items.find(i => i.id === id) : null;
+  editingId = it ? it.id : null;
+  draft = it ? structuredClone(it) : { id:uid(), subject:'', title:'', due:'', status:'scheduled', weight:'', desc:'', materials:[] };
+  removedFiles = []; newUploads = []; savedFlag = false;
+  $('#edTitle').textContent = it ? '수행평가 수정' : '수행평가 추가';
+  $('#edSubject').value = draft.subject; $('#edName').value = draft.title;
+  $('#edDue').value = draft.due || ''; $('#edStatus').value = draft.status;
+  $('#edWeight').value = draft.weight || ''; $('#edDesc').value = draft.desc || '';
+  $('#edErr').textContent = '';
+  renderMeds(); $('#editDlg').showModal();
+}
+
+function renderMeds() {
+  $('#edMats').innerHTML = draft.materials.map((m, i) => {
+    const kind = { text:'글', link:'링크', file:'파일' }[m.kind];
+    const nm = `<span class="mat-kind">${kind}</span><input data-i="${i}" data-f="name" placeholder="자료 이름" value="${esc(m.name)}" aria-label="자료 이름">`;
+    const del = `<button type="button" class="btn small danger" data-delmat="${i}">삭제</button>`;
+    let body = '';
+    if (m.kind === 'text') body = `<textarea data-i="${i}" data-f="content" placeholder="복사하고 다운로드할 내용" aria-label="내용">${esc(m.content)}</textarea>`;
+    else if (m.kind === 'link') body = `<input data-i="${i}" data-f="url" placeholder="https://..." value="${esc(m.url)}" aria-label="링크 주소">`;
+    else body = m.fileId
+      ? `<span class="med-note">올려둔 파일: ${esc(m.fileName || m.name)} (${fmtSize(m.size || 0)})</span>`
+      : `<input type="file" data-i="${i}" data-file aria-label="파일 선택"><span class="med-note">4.5MB 이하</span>`;
+    return `<div class="med"><div class="med-top">${nm}${del}</div>${body}</div>`;
+  }).join('');
+}
+$('#edMats').addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.f) draft.materials[+t.dataset.i][t.dataset.f] = t.value;
+});
+$('#edMats').addEventListener('change', async e => {
+  const t = e.target;
+  if (t.dataset.file === undefined) return;
+  const f = t.files[0]; if (!f) return;
+  if (f.size > 4.5 * 1024 * 1024) { t.value = ''; return toast('파일은 4.5MB 이하만 올릴 수 있어요'); }
+  if (offline) { t.value = ''; return toast('서버에 연결되지 않아 올릴 수 없어요'); }
+  toast('올리는 중…'); $('#edSave').disabled = true;
+  try {
+    const r = await fetch(`/api/upload?name=${encodeURIComponent(f.name)}&type=${encodeURIComponent(f.type || 'application/octet-stream')}`, { method:'POST', headers:hdr(), body:f });
+    if (r.status === 401) { logout(); $('#editDlg').close(); return toast('로그인이 만료됐어요'); }
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error);
+    const m = draft.materials[+t.dataset.i];
+    m.fileId = j.id; m.size = j.size; m.fileName = f.name; if (!m.name) m.name = f.name;
+    newUploads.push(j.id); renderMeds(); toast('올렸어요');
+  } catch (err) { t.value = ''; toast(err.message || '올리지 못했어요'); }
+  finally { $('#edSave').disabled = false; }
+});
+
+$('#editForm').addEventListener('submit', async () => {
+  const subject = $('#edSubject').value.trim(), title = $('#edName').value.trim();
+  const err = m => { $('#edErr').textContent = m; };
+  if (!subject || !title) return err('과목과 제목을 입력해 주세요');
+  const mats = [];
+  for (const m of draft.materials) {
+    const name = (m.name || '').trim();
+    if (m.kind === 'text') { if (!name && !(m.content || '').trim()) continue; mats.push({ id:m.id, kind:'text', name, content:m.content || '' }); }
+    else if (m.kind === 'link') {
+      if (!name && !(m.url || '').trim()) continue;
+      if (!safeUrl((m.url || '').trim())) return err('링크는 http:// 또는 https:// 로 시작해야 해요');
+      mats.push({ id:m.id, kind:'link', name, url:m.url.trim() });
+    } else {
+      if (!m.fileId) return err('파일 자료는 파일을 선택하거나 삭제해 주세요');
+      mats.push({ id:m.id, kind:'file', name:name || m.fileName || '파일', fileId:m.fileId, size:m.size || 0 });
+    }
+  }
+  const item = { id:draft.id, subject, title, due:$('#edDue').value, status:$('#edStatus').value,
+    weight:$('#edWeight').value.trim(), desc:$('#edDesc').value.trim(), materials:mats };
+  const prev = structuredClone(data);
+  const idx = data.items.findIndex(i => i.id === editingId);
+  if (idx >= 0) data.items[idx] = item; else data.items.push(item);
+  $('#edSave').disabled = true;
+  const ok = await save();
+  $('#edSave').disabled = false;
+  if (ok) { savedFlag = true; removedFiles.forEach(delFile); $('#editDlg').close(); }
+  else { data = prev; render(); }
+});
+$('#editDlg').addEventListener('close', () => {
+  if (!savedFlag) newUploads.forEach(delFile);   // 저장하지 않고 닫으면 새로 올린 파일 정리
+  newUploads = [];
+});
+
+load();
+</script>
+</body>
+</html>
