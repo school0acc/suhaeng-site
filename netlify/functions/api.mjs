@@ -22,7 +22,8 @@ function isAdmin(req) {
   return timingSafeEqual(sha(a), sha(id)) && timingSafeEqual(sha(b), sha(pw));
 }
 
-const EMPTY = { title: "수행평가 안내", notice: "", items: [], updatedAt: null };
+const EMPTY = { title: "수행평가 안내", notice: "", items: [], exams: [], mealSheets: [], events: [], meals: {}, updatedAt: null };
+const INLINE_OK = /^image\/(jpeg|png|webp|gif)$/;
 
 export default async (req) => {
   const url = new URL(req.url);
@@ -42,10 +43,13 @@ export default async (req) => {
       const r = await s.getWithMetadata("file-" + parts[1], { type: "arrayBuffer" });
       if (!r) return json({ error: "파일을 찾을 수 없어요" }, 404);
       const name = r.metadata?.name || "download";
+      const type = r.metadata?.type || "application/octet-stream";
+      const inline = url.searchParams.get("inline") === "1" && INLINE_OK.test(type);
       return new Response(r.data, {
         headers: {
-          "content-type": r.metadata?.type || "application/octet-stream",
-          "content-disposition": `attachment; filename*=UTF-8''${encodeURIComponent(name)}`,
+          "content-type": type,
+          "content-disposition": `${inline ? "inline" : "attachment"}; filename*=UTF-8''${encodeURIComponent(name)}`,
+          "x-content-type-options": "nosniff",
           "cache-control": "public, max-age=300",
         },
       });
@@ -70,10 +74,17 @@ export default async (req) => {
       if (text.length > 1_000_000) return json({ error: "데이터가 너무 커요" }, 413);
       const body = JSON.parse(text);
       if (!body || !Array.isArray(body.items)) return json({ error: "잘못된 데이터예요" }, 400);
+      const arr = (v, n) => (Array.isArray(v) ? v.slice(0, n) : []);
+      const meals = body.meals && typeof body.meals === "object" && !Array.isArray(body.meals)
+        ? Object.fromEntries(Object.entries(body.meals).slice(0, 1000)) : {};
       const clean = {
         title: String(body.title || "수행평가 안내").slice(0, 100),
         notice: String(body.notice || "").slice(0, 2000),
         items: body.items.slice(0, 300),
+        exams: arr(body.exams, 300),
+        mealSheets: arr(body.mealSheets, 100),
+        events: arr(body.events, 1500),
+        meals,
         updatedAt: new Date().toISOString(),
       };
       await s.setJSON("data", clean);
