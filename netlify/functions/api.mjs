@@ -22,7 +22,7 @@ function isAdmin(req) {
   return timingSafeEqual(sha(a), sha(id)) && timingSafeEqual(sha(b), sha(pw));
 }
 
-const EMPTY = { title: "수행평가 안내", notice: "", items: [], exams: [], mealSheets: [], events: [], meals: {}, updatedAt: null };
+const EMPTY = { title: "학교 서비스", notice: "", items: [], exams: [], mealSheets: [], events: [], meals: {}, updatedAt: null };
 const INLINE_OK = /^image\/(jpeg|png|webp|gif)$/;
 
 export default async (req) => {
@@ -78,7 +78,7 @@ export default async (req) => {
       const meals = body.meals && typeof body.meals === "object" && !Array.isArray(body.meals)
         ? Object.fromEntries(Object.entries(body.meals).slice(0, 1000)) : {};
       const clean = {
-        title: String(body.title || "수행평가 안내").slice(0, 100),
+        title: String(body.title || "학교 서비스").slice(0, 100),
         notice: String(body.notice || "").slice(0, 2000),
         items: body.items.slice(0, 300),
         exams: arr(body.exams, 300),
